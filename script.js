@@ -11,21 +11,31 @@ const multiply = function(num1, num2) {
 };
 
 const divide = function(num1, num2) {
-    if (num2 === 0) {
-        return "Error: Number can't be divided by zero!";
+    if (num2 == 0) {
+        isError = true;
     }
-    return Math.round(num1 / num2 * 100) / 100;
+    else {
+        return Math.round(num1 / num2 * 100) / 100;
+    }
 };
 
 function operate(operator, num1, num2) {
     switch (operator) {
         case "+":
+            num1 = Number(num1);
+            num2 = Number(num2);
             return add(num1, num2);
         case "-":
+            num1 = Number(num1);
+            num2 = Number(num2);
             return subtract(num1, num2);
         case "*":
+            num1 = Number(num1);
+            num2 = Number(num2);
             return multiply(num1, num2);
         case "/":
+            num1 = Number(num1);
+            num2 = Number(num2);
             return divide(num1, num2);
     }
 }
@@ -40,28 +50,55 @@ let firstNum = "";
 let secondNum = "";
 let operator = "";
 let result = "";
-let operatorClicked = false;
+let isOperatorClicked = false;
+let isError = false;
 
 numButtons.forEach(button => {
     button.addEventListener("click", () => {
-        firstNum += button.textContent;
-        display.textContent = firstNum;
+        if (isError) {
+            firstNum = "";
+            secondNum = "";
+            operator = "";
+            result = "";
+            isOperatorClicked = false;
+            isError = false; 
+        }
+        if (isOperatorClicked) {
+            secondNum += button.textContent;
+            display.textContent = secondNum;
+        }
+        else{
+            firstNum += button.textContent;
+            display.textContent = firstNum;
+        }
     });
 });
 
 operatorButtons.forEach(button => {
     button.addEventListener("click", () => {
-        firstNum = display.textContent;
+        if (isError) {
+            return;
+        }
+        if (secondNum) {
+            result = operate(operator, firstNum, secondNum);
+            firstNum = result;
+            secondNum = "";
+            display.textContent = result;
+        }
+        isOperatorClicked = true;
         operator = button.textContent;
-        display.textContent = operator;
-        operatorClicked = true;
     });
 });
 
 equals.addEventListener("click", () => {
-    secondNum = display.textContent;
+    if (isError) {
+        return;
+    }
     result = operate(operator, firstNum, secondNum);
+    firstNum = result;
+    secondNum = "";
     display.textContent = result;
+    isOperatorClicked = false;
 });
 
 clear.addEventListener("click", () => {
@@ -70,5 +107,6 @@ clear.addEventListener("click", () => {
     secondNum = "";
     operator = "";
     result = "";
-    operatorClicked = false;
+    isOperatorClicked = false;
+    isError = false;
 });
