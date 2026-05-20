@@ -24,13 +24,17 @@ body {
     padding: 20px;
     margin-bottom: 15px;
     min-height: 40px;
+    width: 270px;               /* sabit genişlik — buton gridiyle eşleşir */
     overflow: hidden;
+    white-space: nowrap;        /* alt satıra geçmesin */
+    text-overflow: ellipsis;    /* ... ekle */
+    direction: rtl;             /* ... sağ değil sol tarafa çıksın */
 }
 
 .buttons {
     display: grid;
     grid-template-columns: repeat(4, 70px);
-    grid-template-rows: repeat(4, 70px);
+    grid-template-rows: repeat(5, 70px);
     gap: 10px;
 }
 
@@ -75,4 +79,41 @@ body {
 
 .equals:hover {
   background-color: #229954;
+}
+
+.backspace {
+  background-color: #10ecfc;
+  color: #141c24;
+}
+
+.backspace:hover {
+  background-color: #69ebf5;
+  color: #141c24;
+}
+
+.decimal {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.decimal:hover {
+  background-color: #8e44ad;
+}
+
+.sign {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+.sign:hover {
+  background-color: #d4ac0d;
+}
+
+.power {
+  background-color: #f1c40f;
+  color: #2c3e50;
+}
+
+.power:hover {
+  background-color: #d4ac0d;
 }
