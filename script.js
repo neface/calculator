@@ -1,3 +1,23 @@
+const display = document.querySelector("#displayValue");
+const numButtons = document.querySelectorAll(".number");
+const operatorButtons = document.querySelectorAll(".operator");
+const clear = document.querySelector(".clear");
+const equals = document.querySelector(".equals");
+const backspace = document.querySelector(".backspace");
+const decimal = document.querySelector(".decimal");
+const sign = document.querySelector(".sign");
+const power = document.querySelector(".power");
+const numButtonsArray = [...numButtons];
+const operatorButtonsArray = [...operatorButtons];
+
+let firstNum = "";
+let secondNum = "";
+let operator = "";
+let result = "";
+let isOperatorClicked = false;
+let isError = false;
+let afterEquals = false;
+
 const add = function(num1, num2) {
     return parseFloat((num1 + num2).toFixed(4));
 };
@@ -13,6 +33,7 @@ const multiply = function(num1, num2) {
 const divide = function(num1, num2) {
     if (num2 == 0) {
         isError = true;
+        display.textContent = "Error";
     }
     else {
         return parseFloat((num1 / num2).toFixed(4));
@@ -40,40 +61,13 @@ function operate(operator, num1, num2) {
     }
 }
 
-const display = document.querySelector(".display");
-const numButtons = document.querySelectorAll(".number");
-const operatorButtons = document.querySelectorAll(".operator");
-const clear = document.querySelector(".clear");
-const equals = document.querySelector(".equals");
-const backspace = document.querySelector(".backspace");
-const decimal = document.querySelector(".decimal");
-const sign = document.querySelector(".sign");
-const power = document.querySelector(".power");
-
-let firstNum = "";
-let secondNum = "";
-let operator = "";
-let result = "";
-let isOperatorClicked = false;
-let isError = false;
-let afterEquals = false;
-
 numButtons.forEach(button => {
     button.addEventListener("click", () => {
         if (isError) {
-            firstNum = "";
-            secondNum = "";
-            operator = "";
-            result = "";
-            isOperatorClicked = false;
-            isError = false; 
+            resetState(); 
         }
         if (afterEquals) {
-            firstNum = "";
-            secondNum = "";
-            operator = "";
-            isOperatorClicked = false;
-            afterEquals = false;
+            resetState();
         }
         if (isOperatorClicked) {
             secondNum += button.textContent;
@@ -88,14 +82,18 @@ numButtons.forEach(button => {
 
 operatorButtons.forEach(button => {
     button.addEventListener("click", () => {
-        if (isError) {
-            return;
+        if (!firstNum) {
+            firstNum = "0";
+            display.textContent = firstNum;
         }
         if (secondNum) {
             result = operate(operator, firstNum, secondNum);
-            firstNum = result;
+            if (isError) {
+                return;
+            }
+            firstNum = String(result);
             secondNum = "";
-            display.textContent = result;
+            display.textContent = firstNum;
         }
         isOperatorClicked = true;
         operator = button.textContent;
@@ -104,14 +102,14 @@ operatorButtons.forEach(button => {
 });
 
 equals.addEventListener("click", () => {
-    if (isError) {
-        return;
-    }
     if (!secondNum) {
         display.textContent = firstNum;
         return;
     } else {
         result = operate(operator, firstNum, secondNum);
+        if (isError) {
+            return;
+        }
         firstNum = String(result);
         secondNum = "";
         display.textContent = firstNum;
@@ -122,14 +120,7 @@ equals.addEventListener("click", () => {
 });
 
 clear.addEventListener("click", () => {
-    display.textContent = "0";
-    firstNum = "";
-    secondNum = "";
-    operator = "";
-    result = "";
-    isOperatorClicked = false;
-    isError = false;
-    afterEquals = false;
+    resetState();
 });
 
 backspace.addEventListener("click", () => {
@@ -167,4 +158,39 @@ sign.addEventListener("click", () => {
     if (isError) {
         return;
     }
+    if (isOperatorClicked) {
+        secondNum = secondNum.startsWith("-") ? secondNum.slice(1) : `-${secondNum}`;
+        display.textContent = secondNum;
+    } else {
+        firstNum = firstNum.startsWith("-") ? firstNum.slice(1) : `-${firstNum}`;
+        display.textContent = firstNum;
+    }
 });
+
+document.addEventListener("keydown", (e) => {
+    if (e.key >= "0" && e.key <= "9") {
+        numButtonsArray.find(btn => btn.textContent === e.key)?.click();
+    } else if (["+", "-", "*", "/"].includes(e.key)) {
+        e.preventDefault();
+        operatorButtonsArray.find(btn => btn.textContent === e.key)?.click();
+    } else if (e.key === "Enter" || e.key === "=") {
+        equals.click();
+    } else if (e.key === "Backspace") {
+        backspace.click();
+    } else if (e.key === "Escape") {
+        clear.click();
+    } else if (e.key === ".") {
+        decimal.click();
+    }
+});
+
+function resetState() {
+    firstNum = "";
+    secondNum = "";
+    operator = "";
+    result = "";
+    isOperatorClicked = false;
+    isError = false;
+    afterEquals = false;
+    display.textContent = "0";
+}

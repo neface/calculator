@@ -27,8 +27,13 @@ body {
     width: 270px;               /* sabit genişlik — buton gridiyle eşleşir */
     overflow: hidden;
     white-space: nowrap;        /* alt satıra geçmesin */
-    text-overflow: ellipsis;    /* ... ekle */
-    direction: rtl;             /* ... sağ değil sol tarafa çıksın */
+    text-overflow: ellipsis;
+    direction: rtl;
+}
+
+#displayValue {
+    direction: ltr;
+    unicode-bidi: isolate;
 }
 
 .buttons {
